@@ -13,7 +13,7 @@
 
 
 # Log Path
-$log = "C:\Scripts\RDLogOff\Logs\log.txt"
+$log = "PATH-TO-LOG-FILE"
 # User we do NOT want to log off
 $nonLogOffUser = "USER-TO-NOT-LOG-OFF"
 # Get RD sessions
