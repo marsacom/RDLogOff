@@ -15,7 +15,7 @@
 # Log Path
 $log = "C:\Scripts\RDLogOff\Logs\log.txt"
 # User we do NOT want to log off
-$nonLogOffUser = 'qbdataprotect'
+$nonLogOffUser = "USER-TO-NOT-LOG-OFF"
 # Get RD sessions
 $sessions = quser
 # Log Off Users
@@ -23,7 +23,7 @@ $logOffUsers = @()
 # Log Off Session IDs
 $logOffIDs = @() 
 # RD Server
-$server = "SSISTS02" 
+$server = "YOUR-RD-SERVER" 
 # Time told to users in message to stay logged off for (mins)
 $stayLogOffTime = 15
 # Time before logout (mins)
