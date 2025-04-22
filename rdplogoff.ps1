@@ -13,9 +13,9 @@
 
 
 # Log Path
-$log = ""
+$log = "C:\Scripts\RDLogOff\Logs\log.txt"
 # User we do NOT want to log off
-$nonLogOffUser = ""
+$nonLogOffUser = 'qbdataprotect'
 # Get RD sessions
 $sessions = quser
 # Log Off Users
@@ -23,7 +23,7 @@ $logOffUsers = @()
 # Log Off Session IDs
 $logOffIDs = @() 
 # RD Server
-$server = "" 
+$server = "SSISTS02" 
 # Time told to users in message to stay logged off for (mins)
 $stayLogOffTime = 15
 # Time before logout (mins)
@@ -39,17 +39,24 @@ Thank you
 
 # Check if the log outs were successful
 function LogOutSuccess() {
-    $success = $true
+    $sessions = quser
     foreach($session in $sessions) {
         # Get session info
         $info = ($session -split ' ') | Where-Object { $_ -ne ''} #0=USERNAME, 1=SESSIONNAME, 2=ID, 3=STATE, #4=IDLETIME, 5=LOGONTIME
-        $username = $info[0]                                           
+        $username = $info[0] -replace "\W" #Clean user string                                          
 
         # Get all users to log off except specified user, also filtering the first entry in the array which is the header
         # and see if our specified user is the only one left logged in
-        if ($username -ne $nonLogOffUser -and $username -ne "USERNAME") {
-            $success = $false 
-        } 
+       if ($username -eq "USERNAME") {
+            continue
+       } else { 
+            if ($username -ne $nonLogOffUser) {
+                $success = $false 
+                break
+            } else {
+                $success = $true
+            }
+       }
     }
     return $success
 }
@@ -59,7 +66,7 @@ function LogOutSuccess() {
 foreach ($session in $sessions) {
     # Get session info
     $info = ($session -split ' ') | Where-Object { $_ -ne ''} #0=USERNAME, 1=SESSIONNAME, 2=ID, 3=STATE, #4=IDLETIME, 5=LOGONTIME
-    $username = $info[0]                                      
+    $username = $info[0] -replace "\W" #Clean user string                                      
     $id = $info[2]
 
     # Get all users to log off except specified user, also filtering the first entry in the array which is the header
@@ -115,5 +122,7 @@ Start-Sleep -Seconds 30
 if (LogOutSuccess -eq $true) {
     $ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"    
     Add-Content -Path $log -Value "$ts - SUCCESS - Logged off all users...$logOffUsers"
+} else {
+    $ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"    
+    Add-Content -Path $log -Value "$ts - ERROR - Unable to log all users off, refer to the log for errors on specific users..."
 }
-
